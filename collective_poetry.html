@@ -1,0 +1,18 @@
+<head>
+  <title>collective_poetry</title>
+</head>
+
+<body>
+  <h1>Collective Poem</h1>
+
+</body>
+
+<template name="hello">
+  <div id="poetry">
+  {{#each poemHtml}}
+    {{this}}<br/>
+  {{/each}}
+  <button>Save</button>
+  </div>
+  <textarea id="poemBox">{{poem}}</textarea>
+</template>
