@@ -8,11 +8,25 @@
 </body>
 
 <template name="hello">
-  <div id="poetry">
-  {{#each poemHtml}}
-    {{this}}<br/>
-  {{/each}}
-  <button>Save</button>
+  <div id="poem-page">
+    <div id="poetry">
+    {{#each poem}}
+      {{#if this.lineBreak}}
+      <div class="line-break">&nbsp;</div>
+      {{else}}
+      {{> word }}
+      {{/if}}
+    {{/each}}
+    <div class="line-break">&nbsp;</div>
+    </div>
   </div>
-  <textarea id="poemBox">{{poem}}</textarea>
+</template>
+
+<template name="word">
+    <div class="word">
+        <span class="word-text">{{wordText}}</span>
+        <div class="word-edit">
+            <input class="word-input" type="text" value="{{wordText}}">
+        </div>
+    </div>
 </template>

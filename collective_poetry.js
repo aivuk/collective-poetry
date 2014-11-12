@@ -1,19 +1,20 @@
 Poem = new Mongo.Collection("poem");
 
-function poemContent(html) {
-    html = typeof html != 'undefined' ? html:false;
-    if (html) {
-      pw = Poem.findOne({}).words.split("\n");
-    } else {
-      pw = Poem.findOne({}).words;
+Meteor.methods({
+    updateWord: function (query, newData) {
+        Poem.update(query, newData);
     }
 
+});
+
+function poemContent() {
+    pw = Poem.findOne({}).words.sort(function (a,b) { return a.pos - b.pos; });
     return pw;
 }
 
 Router.route('/teste', function () {
 
-  Session.setDefault("counter", 0);
+  Session.set("poem_id", Poem.findOne()._id);
 
   Template.hello.helpers({
     poemHtml: function () {
@@ -23,15 +24,51 @@ Router.route('/teste', function () {
     poem: function () {
       pw = poemContent();
       return pw;
+    },
+    words: function () {
+      pw = poemContent();
+      return pw;
     }
+
   });
 
   Template.hello.events({
     'click button': function () {
       p = Poem.findOne();
       words = $('#poemBox').val().replace(/^\s+|\s+$/g, '');
-      Poem.update(p._id, {$set: {words: words}});
     },
+    'click .word-text': function (event) {
+        var wordDOM = $(event.currentTarget);
+        var wordEditDOM = wordDOM.next();
+        wordDOM.toggle();
+        wordEditDOM.toggle();
+        $("input", wordEditDOM).focus();
+    },
+    'keypress .word-input': function (event) {
+        if (event.which == 13) {
+            newWord = $(event.target).val();
+            this.word = newWord;
+            Meteor.call("updateWord", {"words.pos": this.pos}, {$set: {"words.$.word": newWord}});
+            var wordDOM = $(event.currentTarget).parent();
+            var wordEditDOM = wordDOM.prev();
+            wordDOM.toggle();
+            wordEditDOM.toggle();
+        }
+    },
+    'click .line-break': function (event) {
+        pw = poemContent();
+        console.log(pw[pw.length -1]);
+    }
+  });
+
+  Template.hello.rendered = function () {
+      $('.word-edit').toggle();
+  }
+
+  Template.word.helpers({
+      wordText: function () {
+        return this.word;
+      }
   });
 
   this.layout('hello');

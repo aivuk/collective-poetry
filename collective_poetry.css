@@ -1,1 +1,21 @@
 /* CSS declarations go here */
+
+#poetry {
+    position: relative;
+}
+
+#poetry .word {
+    float: left;
+    margin-right: 5px;
+}
+
+#poetry .word-edit {
+    float: left;
+    margin-right: 5px;
+}
+
+
+#poetry .line-break {
+    width: 100%;
+    clear: both;
+}
