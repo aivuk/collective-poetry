@@ -1,7 +1,14 @@
 /* CSS declarations go here */
 
+body {
+    padding-top: 40px;
+}
+
 #poetry {
     position: relative;
+    font-family: 'Poiret One', cursive;
+    font-size: 24px;
+    margin: 0 auto;
 }
 
 #poetry .word {
@@ -14,6 +21,13 @@
     margin-right: 5px;
 }
 
+#poetry input {
+    border: 0;
+    background: #eee;
+}
+
+#poem-page {
+}
 
 #poetry .line-break {
     width: 100%;

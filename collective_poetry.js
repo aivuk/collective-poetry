@@ -12,7 +12,7 @@ function poemContent() {
     return pw;
 }
 
-Router.route('/teste', function () {
+Router.route('/poem', function () {
 
   Session.set("poem_id", Poem.findOne()._id);
 
@@ -42,6 +42,8 @@ Router.route('/teste', function () {
         var wordEditDOM = wordDOM.next();
         wordDOM.toggle();
         wordEditDOM.toggle();
+        console.log( wordDOM.width() + 10);
+        $("input", wordEditDOM).css('width', wordDOM.width() + 5);
         $("input", wordEditDOM).focus();
     },
     'keypress .word-input': function (event) {

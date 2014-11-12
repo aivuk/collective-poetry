@@ -1,15 +1,24 @@
 <head>
-  <title>collective_poetry</title>
+  <title>Collective Poem</title>
+  <link href='http://fonts.googleapis.com/css?family=Poiret+One' rel='stylesheet' type='text/css'>
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 </head>
 
 <body>
-  <h1>Collective Poem</h1>
 
 </body>
 
 <template name="hello">
-  <div id="poem-page">
-    <div id="poetry">
+  <div class="container">
+  <div id="poem-page" class="row-fluid">
+    <div id="poetry" class="span6 offset3">
     {{#each poem}}
       {{#if this.lineBreak}}
       <div class="line-break">&nbsp;</div>
@@ -19,6 +28,7 @@
     {{/each}}
     <div class="line-break">&nbsp;</div>
     </div>
+  </div>
   </div>
 </template>
 
