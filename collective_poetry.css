@@ -13,12 +13,11 @@ body {
 
 #poetry .word {
     float: left;
-    margin-right: 5px;
 }
 
 #poetry .word-edit {
     float: left;
-    margin-right: 5px;
+    display: none;
 }
 
 #poetry input {
@@ -32,4 +31,12 @@ body {
 #poetry .line-break {
     width: 100%;
     clear: both;
+}
+
+.space {
+    float: left;
+}
+
+.space:hover {
+    background: #eee;
 }

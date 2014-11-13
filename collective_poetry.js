@@ -1,8 +1,39 @@
 Poem = new Mongo.Collection("poem");
 
+
+
 Meteor.methods({
     updateWord: function (query, newData) {
         Poem.update(query, newData);
+    },
+    insertWord: function (word, position) {
+        p = Poem.findOne();
+        var nw = p.words;
+
+        for (var i = 0; i < nw.length; ++i) {
+            if(nw[i].pos >= position) {
+                nw[i].pos += 1;
+            }
+        }
+
+        nw.push({"word": word, "pos": position});
+        p.words = nw;
+        Poem.update({}, p);
+    },
+    removeWord: function (position) {
+        p = Poem.findOne();
+        var nw = p.words.filter(function (x) { return x.pos != position; });
+
+        for (var i = 0; i < nw.length; ++i) {
+            if(nw[i].pos > position) {
+                nw[i].pos -= 1;
+            }
+        }
+
+        console.log(nw);
+
+        p.words = nw;
+        Poem.update({}, p);
     }
 
 });
@@ -17,19 +48,10 @@ Router.route('/poem', function () {
   Session.set("poem_id", Poem.findOne()._id);
 
   Template.hello.helpers({
-    poemHtml: function () {
-      pw = poemContent(true);
-      return pw;
-    },
     poem: function () {
       pw = poemContent();
       return pw;
     },
-    words: function () {
-      pw = poemContent();
-      return pw;
-    }
-
   });
 
   Template.hello.events({
@@ -49,13 +71,21 @@ Router.route('/poem', function () {
     'keypress .word-input': function (event) {
         if (event.which == 13) {
             newWord = $(event.target).val();
-            this.word = newWord;
-            Meteor.call("updateWord", {"words.pos": this.pos}, {$set: {"words.$.word": newWord}});
+            if (newWord == '') {
+                Meteor.call("removeWord", this.pos);
+            } else {
+                this.word = newWord;
+                Meteor.call("updateWord", {"words.pos": this.pos}, {$set: {"words.$.word": newWord}});
+            }
             var wordDOM = $(event.currentTarget).parent();
             var wordEditDOM = wordDOM.prev();
             wordDOM.toggle();
             wordEditDOM.toggle();
         }
+    },
+    'click .space': function (event) {
+        Meteor.call("insertWord", "N", this.pos)
+//        console.log(this.pos);
     },
     'click .line-break': function (event) {
         pw = poemContent();
@@ -64,7 +94,6 @@ Router.route('/poem', function () {
   });
 
   Template.hello.rendered = function () {
-      $('.word-edit').toggle();
   }
 
   Template.word.helpers({
@@ -72,6 +101,10 @@ Router.route('/poem', function () {
         return this.word;
       }
   });
+
+  insertWord = function (word, position) {
+      Meteor.call("insertWord", word, position);
+  }
 
   this.layout('hello');
 
