@@ -30,8 +30,6 @@ Meteor.methods({
             }
         }
 
-        console.log(nw);
-
         p.words = nw;
         Poem.update({}, p);
     }
@@ -55,21 +53,16 @@ Router.route('/poem', function () {
   });
 
   Template.hello.events({
-    'click button': function () {
-      p = Poem.findOne();
-      words = $('#poemBox').val().replace(/^\s+|\s+$/g, '');
-    },
     'click .word-text': function (event) {
         var wordDOM = $(event.currentTarget);
         var wordEditDOM = wordDOM.next();
         wordDOM.toggle();
         wordEditDOM.toggle();
-        console.log( wordDOM.width() + 10);
         $("input", wordEditDOM).css('width', wordDOM.width() + 5);
         $("input", wordEditDOM).focus();
     },
     'keypress .word-input': function (event) {
-        if (event.which == 13) {
+        if (event.which == 13 || event.which == 32) {
             newWord = $(event.target).val();
             if (newWord == '') {
                 Meteor.call("removeWord", this.pos);
@@ -81,10 +74,15 @@ Router.route('/poem', function () {
             var wordEditDOM = wordDOM.prev();
             wordDOM.toggle();
             wordEditDOM.toggle();
+        } else {
+            console.log("E");
+            var wordDOM = $(event.currentTarget).parent();
+            $("input", wordDOM).css('width', $("input", wordDOM).val().length*15);
+            console.log(wordEditDOM.width());
         }
     },
     'click .space': function (event) {
-        Meteor.call("insertWord", "N", this.pos)
+        Meteor.call("insertWord", "", this.pos)
 //        console.log(this.pos);
     },
     'click .line-break': function (event) {
@@ -94,6 +92,19 @@ Router.route('/poem', function () {
   });
 
   Template.hello.rendered = function () {
+  }
+
+  Template.word.rendered = function () {
+      console.log(this.data);
+      if (this.data.word == '') {
+        console.log("SIM");
+        var wordDOM = $(".word-text", this.firstNode);
+        var wordEditDOM = $(".word-edit", this.firstNode);
+        wordDOM.toggle();
+        wordEditDOM.toggle();
+        $("input", wordEditDOM).css('width', 15);
+
+      }
   }
 
   Template.word.helpers({
