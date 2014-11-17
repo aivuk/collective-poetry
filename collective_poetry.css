@@ -5,9 +5,8 @@ body {
 }
 
 #poetry {
-    position: relative;
     font-family: 'Poiret One', cursive;
-    font-size: 24px;
+    font-size: 32px;
     margin: 0 auto;
 }
 
@@ -17,20 +16,25 @@ body {
 
 #poetry .word-edit {
     float: left;
-    display: none;
 }
 
 #poetry input {
     border: 0;
     background: #eee;
+    padding: 0;
+    width: 20px;
 }
 
 #poem-page {
 }
 
 #poetry .line-break {
-    width: 100%;
-    clear: both;
+    height: 5px;
+}
+
+#poetry .line-break:hover {
+    background: #eee;
+    height: 15px;
 }
 
 .space {
@@ -40,3 +44,4 @@ body {
 .space:hover {
     background: #eee;
 }
+

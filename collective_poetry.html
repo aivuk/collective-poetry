@@ -15,18 +15,25 @@
 
 </body>
 
-<template name="hello">
+<template name="poem">
   <div class="container">
   <div id="poem-page" class="row-fluid">
     <div id="poetry" class="span6 offset3">
-    {{#each poem}}
-      {{#if this.lineBreak}}
-      <div class="line-break">&nbsp;</div>
-      {{else}}
-      {{> word }}
-      {{/if}}
-    {{/each}}
-    <div class="line-break">&nbsp;</div>
+      <div class="container">
+        <div class="row">
+            {{#each poem}}
+              {{#if this.lineBreak}}
+              <span class="space">&nbsp;</span>
+              <br/>
+              <div class="row">
+              <div class="line-break span6"></div>
+              </div>
+              {{else}}
+                  {{> word }}
+             {{/if}}
+            {{/each}}
+       </div>
+      </div>
     </div>
   </div>
   </div>
@@ -34,12 +41,18 @@
 
 <template name="word">
     <div class="word">
-        <span class="word-text">{{wordText}}</span>
-        <div class="word-edit">
-            <input class="word-input" type="text" value="{{wordText}}">
-        </div>
         <span class="space">&nbsp;</span>
+        {{#unless editMode}}
+        <span class="word-text">{{wordText}}</span>
+        {{else}}
+        {{> wordEdit}}
+        {{/unless}}
     </div>
 </template>
 
+<template name="wordEdit">
+        <div class="word-edit">
+            <input class="word-input" autofocus="autofocus" type="text" value="{{this.word}}">
+        </div>
+</template>
 
