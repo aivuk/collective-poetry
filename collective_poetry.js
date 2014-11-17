@@ -71,12 +71,13 @@ if (Meteor.isClient) {
     Template.poem.events({
        'click .word-text': function (event) {
           Session.set("editWord", this.pos);
-          Meteor.flush();
+          $(".hidden-word").text(this.word);
           var wordDOM = $(event.currentTarget);
           var wordEditDOM = wordDOM.next();
           wordDOM.toggle();
           wordEditDOM.toggle();
-          $("input", wordEditDOM).css('width', wordDOM.width() + 5);
+          console.log($('.hidden-word').width());
+          $("input", wordEditDOM).css('width', $('.hidden-word').width() + 20);
           $("input", wordEditDOM).focus();
       },
       'keypress .word-input': function (event) {
@@ -107,23 +108,16 @@ if (Meteor.isClient) {
       }
     });
 
-    Template.poem.rendered = function () {
-    }
-
-    Template.word.rendered = function () {
-    }
-
     Template.wordEdit.rendered = function () {
-        this.$("input").css('width', (this.$("input").val().length + 1)*15);
+        this.$("input").css('width', $(".hidden-word").width() + 20);
         this.$("input").focus();
     }
 
     Template.wordEdit.events({
-        'keypress input': function (event) {
-            console.log(event.currentTarget);
-            var numChars = $(event.currentTarget).val().length + 1;
-            $(event.currentTarget).css('width', numChars*15);
-        }
+        'keyup input': function (event) {
+            $(".hidden-word").text($(event.currentTarget).val());
+            $(event.currentTarget).animate({'width': $(".hidden-word").width() + 20}, 100);
+        },
     });
 
     Template.word.helpers({

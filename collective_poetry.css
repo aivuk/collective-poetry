@@ -18,6 +18,29 @@ body {
     float: left;
 }
 
+.invisible-word {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+}
+
+.cover {
+    top: 0;
+    width: 800px;
+    position: absolute;
+    z-index: 0;
+    background: white;
+    height: 200px;
+}
+
+.hidden-word {
+    font-family: 'Poiret One', cursive;
+    font-size: 32px;
+    top: 0;
+    z-index: -2;
+}
+
 #poetry input {
     border: 0;
     background: #eee;
