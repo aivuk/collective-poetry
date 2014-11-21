@@ -57,6 +57,7 @@ body {
 
 #poetry .line-break:hover {
     background: #eee;
+    height: 15px;
 }
 
 #poetry .line-break:hover  .remove-line {
