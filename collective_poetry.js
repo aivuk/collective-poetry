@@ -1,10 +1,36 @@
 Poem = new Mongo.Collection("poem");
+PoemHistory = new Mongo.Collection("poemHistory");
+
+function updateHistory() {
+        var oldPoem = Poem.findOne({is_online: true});
+        oldPoem.time = new Date();
+        delete oldPoem._id;
+        PoemHistory.insert(oldPoem);
+}
 
 Meteor.methods({
-    updateWord: function (query, newData) {
-        Poem.update(query, newData);
+    updateWord: function (newWord) {
+        updateHistory();
+
+        p = Poem.findOne();
+        var nw = p.words;
+
+        for (var i = 0; i < nw.length; ++i) {
+            if (nw[i].lastWord) {
+                delete nw[i].lastWord;
+            }
+
+            if(nw[i].pos == newWord.pos) {
+                nw[i] = newWord;
+            }
+        }
+        p.words = nw;
+
+        Poem.update({is_online: true}, p);
     },
     insertWord: function (word, position) {
+        updateHistory();
+
         p = Poem.findOne();
         var nw = p.words;
 
@@ -12,52 +38,102 @@ Meteor.methods({
             if(nw[i].pos >= position) {
                 nw[i].pos += 1;
             }
+
+            if (nw[i].lastWord) {
+                delete nw[i].lastWord;
+            }
         }
 
-        nw.push({"word": word, "pos": position});
+        nw.push({"word": word, "pos": position, "lastWord": true});
         p.words = nw;
-        Poem.update({}, p);
+        Poem.update({is_online: true}, p);
     },
     removeWord: function (position) {
-        p = Poem.findOne();
+        updateHistory();
+
+        p = Poem.findOne({is_online: true});
         var nw = p.words.filter(function (x) { return x.pos != position; });
 
         for (var i = 0; i < nw.length; ++i) {
             if(nw[i].pos > position) {
                 nw[i].pos -= 1;
             }
+
+            if (nw[i].lastWord) {
+                delete nw[i].lastWord;
+            }
         }
 
         p.words = nw;
-        Poem.update({}, p);
+        Poem.update({is_online: true}, p);
     },
     insertLineBreak: function (position) {
-        p = Poem.findOne();
+        updateHistory();
+
+        p = Poem.findOne({is_online: true});
         var nw = p.words;
 
         for (var i = 0; i < nw.length; ++i) {
             if(nw[i].pos >= position) {
                 nw[i].pos += 1;
             }
+
+            if (nw[i].lastWord) {
+                delete nw[i].lastWord;
+            }
         }
 
-        nw.push({"lineBreak": true, "pos": position});
+        nw.push({"lineBreak": true, "pos": position, "lastWord": true});
         p.words = nw;
-        Poem.update({}, p);
+        Poem.update({is_online: true}, p);
     }
 
 });
 
 Router.route('/poem', function () {
-  poem = Poem.findOne({});
+  poem = Poem.findOne({is_online: true});
 
   this.render('poem');
+
+});
+
+Router.route('/poemHistory', function () {
+  poemHistory = PoemHistory.find();
+  poemVisible = 0;
+  numPoems = poemHistory.count() + 1;
+
+  this.render('poemHistory');
 
 });
 
 
 if (Meteor.isClient) {
     var editPosition = 0;
+
+    Template.poemHistory.helpers({
+        'poems': function () {
+            return getPoemHistory();
+        }
+    });
+
+    Template.poemVersion.rendered = function () {
+        if (this.data.pos != poemVisible) {
+            this.$(".poem").hide();
+        }
+    }
+
+    Template.body.events({
+        'keydown': function (event) {
+            console.log(numPoems);
+            if (event.which == 39) {
+                visiblePoem = $("#poem-" + poemVisible);
+                visiblePoem.toggle(0);
+                poemVisible = (poemVisible + 1) % numPoems;
+                $("#poem-" + poemVisible).toggle(0);
+
+            }
+        }
+    });
 
     Template.poem.helpers({
         'poem': function () {
@@ -87,7 +163,8 @@ if (Meteor.isClient) {
                   Meteor.call("removeWord", this.pos);
               } else {
                   this.word = newWord;
-                  Meteor.call("updateWord", {"words.pos": this.pos}, {$set: {"words.$.word": newWord}});
+                  var upword = {'word': newWord, 'pos': this.pos, 'lastWord': true};
+                  Meteor.call("updateWord", upword);
                   if (event.which == 32) {
                       Meteor.call("insertWord", "", this.pos + 1);
                       Session.set("editWord", this.pos + 1);
@@ -130,8 +207,33 @@ if (Meteor.isClient) {
     });
 
     function poemContent() {
-        pw = Poem.findOne({}).words.sort(function (a,b) { return a.pos - b.pos; });
+        pw = Poem.findOne({is_online: true}).words.sort(function (a,b) { return a.pos - b.pos; });
         return pw;
+    }
+
+    function getPoemHistory() {
+        var poems = PoemHistory.find();
+        poems = poems.fetch();
+        poems = poems.map(function (x) {
+            x.words.sort(function (a,b) { return a.pos - b.pos; });
+            return x;
+        });
+
+        poems.sort(function (a,b) { return a.time - b.time; });
+
+        var lastPoem = Poem.findOne({is_online: true});
+        lastPoem.words.sort(function (a,b) { return a.pos - b.pos; });
+
+        poems.push(lastPoem);
+
+        var idx_poems = poems.map(function (x, i) {
+                            x.pos = i;
+                            if (i > 0) {
+                                x.hidden = true;
+                            } return x; });
+
+
+        return idx_poems;
     }
 
 }

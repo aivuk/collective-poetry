@@ -57,7 +57,10 @@ body {
 
 #poetry .line-break:hover {
     background: #eee;
-    height: 15px;
+}
+
+#poetry .line-break:hover  .remove-line {
+    display: inline;
 }
 
 .space {
@@ -68,3 +71,14 @@ body {
     background: #eee;
 }
 
+.remove-line {
+    display: none;
+}
+
+.last {
+    background: #eee;
+}
+
+.poem.hidden {
+    display: none;
+}

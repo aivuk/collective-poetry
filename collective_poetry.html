@@ -50,9 +50,45 @@
     </div>
 </template>
 
+<template name="wordN">
+    <div class="word">
+        <span class="space{{#unless word}}{{#if lastWord }} last{{/if}}{{/unless}}">&nbsp;</span>
+        <span class="word-text{{#if lastWord }} last{{/if}}">{{word}}</span>
+    </div>
+</template>
+
 <template name="wordEdit">
         <div class="word-edit">
             <input class="word-input" autofocus="autofocus" type="text" value="{{this.word}}">
         </div>
 </template>
+
+<template name="poemVersion">
+        <div id="poem-{{ pos }}" class="row poem">
+            {{#each words}}
+              {{#if lineBreak}}
+              <div class="row">
+              <div class="line-break span6">&nbsp;</div>
+              </div>
+              {{else}}
+                {{> wordN}}
+             {{/if}}
+            {{/each}}
+       </div>
+</template>
+
+<template name="poemHistory">
+  <div class="container">
+  <div id="poem-page" class="row-fluid">
+    <div id="poetry" class="span6 offset3">
+      <div class="container">
+        {{#each poems}}
+        {{> poemVersion}}
+        {{/each}}
+      </div>
+    </div>
+  </div>
+  </div>
+</template>
+
 
