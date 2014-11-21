@@ -67,8 +67,9 @@
         <div id="poem-{{ pos }}" class="row poem">
             {{#each words}}
               {{#if lineBreak}}
+              <br/>
               <div class="row">
-              <div class="line-break span6">&nbsp;</div>
+              <div class="line-break span6{{#if lastWord }} last{{/if}}"><span>&nbsp;</span></div>
               </div>
               {{else}}
                 {{> wordN}}
