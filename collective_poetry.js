@@ -90,14 +90,14 @@ Meteor.methods({
 
 });
 
-Router.route('/poem', function () {
+Router.route('/', function () {
   poem = Poem.findOne({is_online: true});
 
   this.render('poem');
 
 });
 
-Router.route('/poemHistory', function () {
+Router.route('/past', function () {
   poemHistory = PoemHistory.find();
   poemVisible = 0;
   numPoems = poemHistory.count() + 1;

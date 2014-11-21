@@ -82,3 +82,7 @@ body {
 .poem.hidden {
     display: none;
 }
+
+.word-text:hover {
+    background: #eee;
+}
